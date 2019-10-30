@@ -1,4 +1,3 @@
-  
 # Copyright IBM Corp. All Rights Reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -20,10 +19,10 @@ Organizations:
     - &OrdererOrg
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
-        Name: Cesonia
+        Name: OrdererOrg
 
         # ID to load the MSP definition as
-        ID: CesoniaMSP
+        ID: OrdererMSP
 
         # MSPDir is the filesystem path which contains the MSP configuration
         MSPDir: crypto-config/ordererOrganizations/cesonia.com/msp
@@ -34,23 +33,23 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('CesoniaMSP.member')"
+                Rule: "OR('OrdererMSP.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('CesoniaMSP.member')"
+                Rule: "OR('OrdererMSP.member')"
             Admins:
                 Type: Signature
-                Rule: "OR('CesoniaMSP.admin')"
+                Rule: "OR('OrdererMSP.admin')"
 
     - &Org1
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
-        Name: Bmw1MSP
+        Name: Org1MSP
 
         # ID to load the MSP definition as
-        ID: Bmw1MSP
+        ID: Org1MSP
 
-        MSPDir: crypto-config/peerOrganizations/bmw1.cesonia.com/msp
+        MSPDir: crypto-config/peerOrganizations/org1.cesonia.com/msp
 
         # Policies defines the set of policies at this level of the config tree
         # For organization policies, their canonical path is usually
@@ -58,20 +57,20 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('Bmw1MSP.admin', 'Bmw1MSP.peer', 'Bmw1MSP.client')"
+                Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('Bmw1MSP.admin', 'Bmw1MSP.client')"
+                Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
             Admins:
                 Type: Signature
-                Rule: "OR('Bmw1MSP.admin')"
+                Rule: "OR('Org1MSP.admin')"
 
         # leave this flag set to true.
         AnchorPeers:
             # AnchorPeers defines the location of peers which can be used
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
-            - Host: peer0.bmw1.cesonia.com
+            - Host: peer0.org1.cesonia.com
               Port: 7051
 
     - &Org2
@@ -217,7 +216,7 @@ Application: &ApplicationDefaults
 Orderer: &OrdererDefaults
 
     # Orderer Type: The orderer implementation to start
-    # Available types are "solo","kafka"  and "etcdraft"
+    # Available types are "solo" and "kafka"
     OrdererType: solo
 
     Addresses:
@@ -246,19 +245,6 @@ Orderer: &OrdererDefaults
         # NOTE: Use IP:port notation
         Brokers:
             - 127.0.0.1:9092
-
-    # EtcdRaft defines configuration which must be set when the "etcdraft"
-    # orderertype is chosen.
-    EtcdRaft:
-        # The set of Raft replicas for this network. For the etcd/raft-based
-        # implementation, we expect every replica to also be an OSN. Therefore,
-        # a subset of the host:port items enumerated in this list should be
-        # replicated under the Orderer.Addresses key above.
-        Consenters:
-            - Host: orderer.cesonia.com
-              Port: 7050
-              ClientTLSCert: crypto-config/ordererOrganizations/cesonia.com/orderers/orderer.cesonia.com/tls/server.crt
-              ServerTLSCert: crypto-config/ordererOrganizations/cesonia.com/orderers/orderer.cesonia.com/tls/server.crt
 
     # Organizations is the list of orgs which are defined as participants on
     # the orderer side of the network

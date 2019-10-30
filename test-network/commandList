@@ -1,0 +1,86 @@
+./bin/cryptogen generate --config=./crypto-config.yaml  --to generate crypto artifacts
+
+-----> always in small letters
+
+export SYS_CHANNEL=cesoniachannel
+export FABRIC_CFG_PATH=$PWD
+export CHANNEL_NAME=twoorgchannel
+export home_directory=$PWD
+
+export BYFN_CAU_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org1.cesonia.com/ca && ls *_sk)
+export BYFN_CAD_PRIVATE_KEY=$(cd crypto-config/peerOrganizations/org2.cesonia.com/ca && ls *_sk)
+
+
+
+#latest HLF 1.4.3 command
+./bin/configtxgen -profile TwoOrgsOrdererGenesis -channelID $SYS_CHANNEL -outputBlock ./channel-artifacts/genesis.block
+./bin/configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/twoorgschannel.tx -channelID $CHANNEL_NAME
+./bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/org1mspanchor.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+./bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/org2mspanchor.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
+
+docker ps -a //containers running
+docker logs <containers ID>
+docker start $(docker ps -aq) to start containers
+docker stop $(docker ps -aq) to stop containers
+docker kill $(docker ps -aq) to kill containers
+docker rm $(docker ps -aq) to remove containers
+docker volume prune          to start containers
+
+
+
+########  docker-compose -f ./base/docker-compose-base.yaml up -d
+
+docker-compose -f docker-compose-couch.yaml -f docker-compose-cli.yaml -f docker-compose-ca.yaml up -d
+
+
+-->>    entering into peer1 command prompt 
+
+
+docker exec -it cli bash
+
+
+______________________________________________________________
+
+CORE_PEER_CHAINCODELISTENADDRESS=peer1.org1.cesonianetwork.com:7052
+export CHANNEL_NAME=twoorgchannel
+export CHANNEL_ID=twoorgchannel
+export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/cesonia.com/orderers/orderer.cesonia.com/msp/tlscacerts/tlsca.cesonia.com-cert.pem
+export CC_SRC_PATH="github.com/chaincode/doctor"
+export CC_SRC_PATH="github.com/chaincode/activity"
+CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+
+
+
+peer channel create -c $CHANNEL_NAME -f ./channel-artifacts/twoorgschannel.tx -o orderer.cesonia.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
+
+peer channel join -b $CHANNEL_NAME.block
+
+-----ChainCode Install----
+
+peer chaincode install -n doctors_chain -v 1 -l golang -p  ${CC_SRC_PATH}
+
+peer chaincode instantiate -o orderer.cesonia.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n doctors_chain -v 1 -c '{"Args":["init","Ajit Shah","1","test1@gmail.com","9860606060","Aundh"]}' -P "OR('Org1MSP.peer','Org2MSP.peer')"
+
+peer chaincode invoke -o orderer.cesonia.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n doctors_chain -c '{"Args":["CreateDoctor","Amol Shaya","2","am@gmail.com","990909090","Baner"]}'
+
+peer chaincode invoke -o orderer.tietonetworks.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n doctors_chain -c '{"Args":["CreateDoctor","Dr Jack Kalis","3","jack@gmail.com","999999999","London"]}'
+
+peer chaincode query -C $CHANNEL_NAME -n doctors_chain -c '{"Args":["GetDoctorByID","4"]}'
+
+______________________________________________________________
+
+peer chaincode install -n activity_chain -v 1 -l golang -p  ${CC_SRC_PATH}
+
+peer chaincode instantiate -o orderer.cesonia.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n activity_chain -v 1 -c '{"Args":["init","Setup Views","1","Haroon","001"]}' -P "OR('Org1MSP.peer','Org2MSP.peer')"
+
+peer chaincode invoke -o orderer.cesonia.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n activity_chain -c '{"Args":["CreateActivity","Setup Tables","2","Hamad","002"]}'
+
+peer chaincode invoke -o orderer.cesonia.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n activity_chain -c '{"Args":["CreateActivity","Create Channel","3","Sourav","003"]}'
+
+peer chaincode query -C $CHANNEL_NAME -n activity_chain -c '{"Args":["GetActivityByID","1"]}'
+
+
+
+
+
+
