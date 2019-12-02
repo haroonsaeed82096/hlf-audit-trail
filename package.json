@@ -1,0 +1,45 @@
+{
+  "name": "hyperledger-fabric-example",
+  "version": "0.1.0",
+  "description": "Hyperledger Fabric Bootstrap Example",
+  "main": "index.js",
+  "scripts-info": {
+    "info": "List available script",
+    "create-channel": "Create the Channel",
+    "join-channel": "Join Peers to the channel",
+    "install-chaincode": "Install the chaincode on the peers",
+    "instantiate-chaincode": "Instantiate the chaincode for the channel",
+    "invoke-transaction": "Invoke a transaction",
+    "query-chaincode": "Query the chaincode"
+  },
+  "scripts": {
+    "info": "npm-scripts-info",
+    "create-channel": "ts-node src/create-channel.ts",
+    "join-channel": "ts-node src/join-channel.ts",
+    "install-chaincode": "ts-node src/install-chaincode.ts",
+    "instantiate-chaincode": "ts-node src/instantiate-chaincode.ts",
+    "invoke-transaction": "ts-node src/invoke-transaction.ts",
+    "query-chaincode": "ts-node src/query-chaincode.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ksachdeva/hyperledger-fabric-example.git"
+  },
+  "author": "Kapil Sachdeva",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ksachdeva/hyperledger-fabric-example/issues"
+  },
+  "homepage": "https://github.com/ksachdeva/hyperledger-fabric-example#readme",
+  "devDependencies": {
+    "@types/bytebuffer": "^5.0.33",
+    "npm-run-all": "^4.0.2",
+    "npm-scripts-info": "^0.3.6",
+    "shx": "^0.2.2",
+    "ts-node": "^3.2.1",
+    "typescript": "^2.4.2"
+  },
+  "dependencies": {
+    "fabric-client": "^1.0.0"
+  }
+}
