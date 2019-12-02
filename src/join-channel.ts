@@ -35,7 +35,7 @@ import config from './config';
        targets: peers
      });
    } catch (e) {
-     logger.error(e);
+     console.error(e);
    }
  }
    export async function JoinChannel() {

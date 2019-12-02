@@ -114,9 +114,6 @@ var PEERS = {
     let ORG_ADMIN_MSP = MSP_DIR[org];
     //console.log('ORG_ADMIN_MSP---------------------Path: '+ORG_ADMIN_MSP);
 
-    let privateKeyFilePath = fs.readdirSync(__dirname + ORG_ADMIN_MSP + '/keystore');
-    //console.log('privateKeyFilePath---------------------Path: '+privateKeyFilePath);
-
     let privateKeyFile = fs.readdirSync(__dirname + ORG_ADMIN_MSP + '/keystore')[0];
     //console.log('privateKeyFile---------------------Path: '+privateKeyFile);
 
@@ -126,8 +123,8 @@ var PEERS = {
     // ###  GET THE NECESSRY KEY MATERIAL FOR THE ADMIN OF THE SPECIFIED ORG  ##
     let cryptoContentOrgAdmin: CryptoContent = {
       //privateKey: ORG_ADMIN_MSP + '/keystore/' + privateKeyFile,
-      privateKey: ORG_ADMIN_MSP+'/keystore/'+privateKeyFile,
-      signedCert: ORG_ADMIN_MSP+'/signcerts/'+signed_Cert
+      privateKey: path.join(__dirname, ORG_ADMIN_MSP+'/keystore/'+privateKeyFile),
+      signedCert: path.join(__dirname, ORG_ADMIN_MSP+'/signcerts/'+signed_Cert)
 
       //signedCert: ORG_ADMIN_MSP + '/signcerts/Admin@org1.cesonia.com-cert.pem'
     };
