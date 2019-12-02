@@ -2,7 +2,7 @@
   "name": "hyperledger-fabric-example",
   "version": "0.1.0",
   "description": "Hyperledger Fabric Bootstrap Example",
-  "main": "index.js",
+  "main": "start.js",
   "scripts-info": {
     "info": "List available script",
     "create-channel": "Create the Channel",
